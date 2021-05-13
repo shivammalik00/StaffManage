@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "CreateStaff";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Add Staff</h1>
+
+<h4>Staff Detail</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="text-danger"></div>
+            <div class="form-group">
+                <label id="lblname" class="control-label">Name</label>
+                <input required id="Name" class="form-control" />
+                <span id="spnName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label id="lblHoursAvailable" class="control-label">Hours Available</label>
+                <input required id="HoursAvailable" class="form-control"  placeholder="0-8" />
+                <span id="spnHoursAvailable" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label id="lbDateCreated" class="control-label">Date Created</label>
+                <input required id="DateCreated" class="form-control"   placeholder="yyyy-mm-dd" />
+                <span id="spnDateCreated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input id="submit" type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Staff">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+
+
+        $(function () {
+            $('#submit').click(function (e) {
+                e.preventDefault();
+                var data = {};
+                data.Name = $('#Name').val();
+                data.HoursAvailable = parseInt($('#HoursAvailable').val());
+                data.DateCreated = $('#DateCreated').val();
+                data.IsAvailable = true;
+
+                var jsonData = JSON.stringify(data);
+
+                var settings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": "/StaffManagement/CreateStaff",
+                    "method": "POST",
+                    "headers": {
+                        "content-type": "application/json",
+                        "cache-control": "no-cache",                        
+                    },
+                    "processData": false,
+                    "data": jsonData
+                }
+
+                $.ajax(settings).done(function (response) {
+                    alert("Staff Added Susccesfully");
+                    console.log(response);
+                  
+                       
+                });
+
+
+                //var data = {};
+                //data.Name = $('#Name').val();
+                //data.HoursAvailable = parseInt($('#HoursAvailable').val());
+                //data.DateCreated = $('#DateCreated').val();
+                //data.IsAvailable = true;
+
+                //var jsonData = JSON.stringify(data);
+
+                //$.ajax({
+                //    type: 'POST',
+                //    url: '/StaffManagement/CreateStaff',
+                //    dataType: 'json',
+                //    data: {"Name":"TestStaff2","HoursAvailable":8,"DateCreated":"2021-12-12"},
+                //    success: bindData,
+                //    contentType: "application/json; charset=utf-8",
+                //    error: function (e) {
+                //        //$('#spnModalValiation').html('This route is not available');
+                //        //$('#VoyageErrorMsg').modal('show');
+                //        //$('#pageLoader').hide();
+                //        ////$('#spnLoadError').html('This route is not available');
+                //        console.log(e.statusText);
+                //    }
+                //});
+                //function bindData(data) {
+                //    var jsonData = JSON.parse(data);
+                //    let value = jsonData;
+                   
+                //}
+            });
+        });
+        
+
+            
+
+        
+    </script>
+
+}

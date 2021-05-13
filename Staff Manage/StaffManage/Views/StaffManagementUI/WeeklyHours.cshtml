@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "WeeklyHours";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Total hours worked in A Week</h1>
+
+<h4 id="TotalHours">
+</h4>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/StaffManagement/GetWeeklyHours",
+                contentType: "application/json; char",
+                dataType: "json",
+                success: bindData,
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        });
+
+        function bindData(data) {
+            var jsonData = JSON.parse(data);
+            let value = data;
+            
+            $('#TotalHours').html(value);
+        }
+    </script>
+}
+
+

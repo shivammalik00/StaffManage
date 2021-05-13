@@ -1,0 +1,57 @@
+﻿
+
+@{
+    ViewData["Title"] = "Available Staff";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Staff</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="AddStaff">Create New</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                Staff Name
+            </th>
+            <th>
+                Available Hours
+            </th>
+            <th>
+                Date Created
+            </th>
+           
+        </tr>
+    </thead>
+    <tbody id="tbodyStaff">
+       
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "/StaffManagement/GetActiveStaff",
+            contentType: "application/json; char",
+            dataType: "json",
+            success: bindData,
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    });
+        function bindData(data) {
+            var jsonData = JSON.parse(data);
+            let value = '';
+            for (i = 0; i < jsonData.length; i++) {
+                value += '<tr><td>' + jsonData[i].Name + '</td><td>' + jsonData[i].HoursAvailable + '</td><td>' + jsonData[i].DateCreated+'</td></tr>';
+            }
+            $('#tbodyStaff').html(value);
+        }
+
+    </script>
+}

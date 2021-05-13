@@ -1,0 +1,58 @@
+﻿
+
+@{
+    ViewData["Title"] = "WeeklyTask";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Weekly Task</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Title
+            </th>
+            <th>
+                Hour
+            </th>
+            <th>
+                Is completed
+            </th>
+            <th>
+                Date Created
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tbodyTask">
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/StaffManagement/GetWeeklyTasks",
+                contentType: "application/json; char",
+                dataType: "json",
+                success: bindData,
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        });
+
+        function bindData(data) {
+            var jsonData = JSON.parse(data);
+            let value = '';
+            for (i = 0; i < jsonData.length; i++) {
+                value += '<tr><td>' + jsonData[i].Name + '</td><td>' + jsonData[i].Hour + '</td><td>' + jsonData[i].Iscomplted + '</td><td>' + jsonData[i].DateCreated +'</td></tr>';
+            }
+            $('#tbodyTask').html(value);
+        }
+    </script>
+}
+

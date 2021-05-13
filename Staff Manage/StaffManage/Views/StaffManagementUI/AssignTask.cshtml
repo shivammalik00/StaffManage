@@ -1,0 +1,148 @@
+﻿@{
+    ViewData["Title"] = "Assign Task TO Staff";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Assign Task</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="text-danger"></div>
+            <div class="form-group">
+                <label id="lblStaffId" class="control-label">Staff</label>
+                <select id="staffId" class="form-control">
+                </select>
+                <span id="spnStaff" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label id="lblTaskId" class="control-label">task</label>
+                <select id="TaskId" class="form-control">
+                </select>
+                <span id="spntask" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label id="lblAssignedDate" class="control-label">Assigning Date </label>
+                <input id="AssignedDate" class="form-control" />
+                <span id="spnAssignedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label id="lblAsiggnedHours" class="control-label"> Hours Assigned </label>
+                <input id="AsiggnedHours" onchange="" class="form-control" />
+                <span id="spnAsiggnedHours" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" id="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        var remainingTasktime = 0;
+
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/StaffManagement/GetActiveStaff",
+                contentType: "application/json; char",
+                dataType: "json",
+                success: bindStaffData,
+                failure: function (response) {
+                    alert(response);
+                }
+            }),
+                $.ajax({
+                    type: "GET",
+                    url: "/StaffManagement/GetActiveTasks",
+                    contentType: "application/json; char",
+                    dataType: "json",
+                    success: bindTaskData,
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+        
+        function bindStaffData(data) {
+            var jsonData = JSON.parse(data);
+            let value = '';
+            for (i = 0; i < jsonData.length; i++) {
+                value += '<option value=' + jsonData[i].ID + '>' + jsonData[i].Name + '</option>';
+            }
+            $('#staffId').html(value);
+        }
+        function bindTaskData(data) {
+            var jsonData = JSON.parse(data);
+            let value = '';
+            for (i = 0; i < jsonData.length; i++) {
+                value += '<option value=' + jsonData[i].ID + '>' + jsonData[i].Name + '</option>';
+            }
+            $('#TaskId').html(value);
+        }
+        $('#TaskId').on('change', function () {
+            var tid = $('#TaskId option:selected').val();
+            $.ajax({
+                type: "GET",
+                url: "/StaffManagement/GetTaskRemainigTime?taskId=" + tid,
+                contentType: "application/json; char",
+                dataType: "json",
+                success: bindTasktime,
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        });
+        function bindTasktime(data) {
+            remainingTasktime = data;
+        }
+        //$('#AsiggnedHours').on('change', function () {
+        //    if ($('#AsiggnedHours').val() > remainingTasktime)
+        //        $('#spnAsiggnedHours').html('Please provide hours less tha or equal to :' + remainingTasktime);
+        //});
+        $('#submit').click(function (e) {
+            e.preventDefault();
+            var data = {};
+            data.StaffID = parseInt($('#staffId option:selected').val());
+            data.TaskID = parseInt($('#TaskId option:selected').val());
+            data.AssignedDate = $('#AssignedDate').val();
+            data.AsiggnedHours = parseFloat($('#AsiggnedHours').val());
+
+            var jsonData = JSON.stringify(data);
+
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "/StaffManagement/AssignTask",
+                "method": "POST",
+                "headers": {
+                    "content-type": "application/json",
+                    "cache-control": "no-cache",
+                },
+                "processData": false,
+                "data": jsonData
+            }
+
+            $.ajax(settings).done(function (response) {
+                alert("Task Assigned Susccesfully");
+                console.log(response);
+
+            });
+                //$(document).ready(function () {
+
+                //    var j +='<option value=' + 1 + '>' + dsj + '</option>';
+                //    $('#staffId').html(j);
+
+                //    var staffId = $('#staffId option:selected').val();
+
+        });
+        });
+    </script>
+
+}

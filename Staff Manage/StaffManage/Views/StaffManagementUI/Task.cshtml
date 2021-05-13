@@ -1,0 +1,50 @@
+﻿
+
+@{
+    ViewData["Title"] = "Active Task";
+}
+
+<h1>Task</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="AddTask">Create New Task</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                Task Title
+            </th>
+            <th>
+                Hours to Complete
+            </th>
+        </tr>
+    </thead>
+    <tbody id="tbodyTask">
+    </tbody>
+</table>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/StaffManagement/GetActiveTasks",
+                contentType: "application/json; char",
+                dataType: "json",
+                success: bindData,
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        });
+
+        function bindData(data) {
+            var jsonData = JSON.parse(data);
+            let value = '';
+            for (i = 0; i < jsonData.length; i++) {
+                value += '<tr><td>' + jsonData[i].Name + '</td><td>' + jsonData[i].Hour + '</td></tr>';
+            }
+            $('#tbodyTask').html(value);
+        }
+        </script>
+}
